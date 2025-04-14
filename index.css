@@ -38,7 +38,7 @@ html {
 	height: 100%;
 	display: grid;
 	place-items: center;
-	background-color: #f0f7ff; /* 更淺的藍色背景 */
+	background-color: #f4f8fb;
 	overflow: hidden;
 }
 
@@ -59,7 +59,7 @@ main {
 
 /* Styles the header with a title and a toggle button for the entries list. */
 #header {
-	color: #2c3e50; /* 深藍灰色標題 */
+	color: #002a44;
 	line-height: 1;
 }
 
@@ -73,11 +73,11 @@ main {
 	transform: rotate(88deg);
 	transform-origin: 60% 60%;
 	transition: color 0.3s;
-	color: #3498db; /* 藍色切換按鈕 */
+	color: #007acc;
 }
 
 #toggle-entries:hover {
-	color: #2980b9; /* 深藍色懸停效果 */
+	color: #005488;
 }
 
 /* The entries list, which is overlaid on top of the flashcard area. */
@@ -86,8 +86,8 @@ main {
 	grid-row: 2 / 3;
 	grid-column: 1 / 2;
 	height: 100%;
-	background-color: rgba(255, 255, 255, 0.95); /* 更不透明的白色背景 */
-	border: 1px solid rgba(52, 152, 219, 0.2); /* 淺藍色邊框 */
+	background-color: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(0, 0, 0, 0.1);
 	display: none;
 	opacity: 0;
 	transition: display 0.3s allow-discrete, opacity 0.3s;
@@ -110,12 +110,11 @@ main {
 
 #entries th, #entries td {
 	padding: 0.75rem;
-	border-bottom: 1px solid #bdc3c7; /* 淺灰色邊框 */
+	border-bottom: 1px solid #ddd;
 }
 
 #entries th {
-	background-color: #3498db; /* 藍色表頭 */
-	color: white; /* 白色文字 */
+	background-color: #ddf5ff;
 }
 
 #entries th:first-child {
@@ -137,10 +136,13 @@ main {
 }
 
 #entries tbody tr:hover {
-	background-color: #ecf0f1; /* 淺灰色懸停效果 */
+	background-color: #f1f1f1;
 }
 
-/* Toggle entries checkbox effects */
+/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
+	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
+	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
+	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
 #toggle-entries-checkbox:checked ~ main #entries {
 	display: block;
 	opacity: 1;
@@ -150,11 +152,11 @@ main {
 }
 
 .row-highlight {
-	background-color: #fff7e6; /* 淺橙色高亮 */
+	background-color: #fff3cd;
 }
 
 .overdue-date {
-	color: #e74c3c; /* 紅色過期日期 */
+	color: #d9534f;
 	font-weight: bold;
 }
 
@@ -176,7 +178,9 @@ main {
 	cursor: pointer;
 }
 
-/* Card flip effect */
+/* Rotates the card around the Y-axis when the checkbox is checked such that the back side is visible.
+	It makes use of the same technique as the entries list to toggle the checkbox state when the card is clicked.
+	When the checkbox is no longer checked, the card is rotated back to the front side. */
 #flip-card-checkbox:checked ~ main #card-inner {
 	transform: rotateY(180deg);
 }
@@ -190,16 +194,16 @@ main {
 	align-items: center;
 	justify-content: center;
 	padding: 2rem;
-	background-color: #ffffff; /* 純白色卡片背景 */
-	border: 1px solid rgba(52, 152, 219, 0.3); /* 藍色卡片邊框 */
+	background-color: #fefefe;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 	font-size: 150%;
 	border-radius: 1rem;
-	box-shadow: 0 4px 6px rgba(52, 152, 219, 0.1); /* 藍色陰影 */
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	transition: box-shadow 0.3s;
 }
 
 .card:hover {
-	box-shadow: 0 8px 16px rgba(52, 152, 219, 0.2); /* 更強的藍色陰影 */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* STUDENTS: Start of recommended modifications */
@@ -207,16 +211,14 @@ main {
 
 /* Styles for the front side of the card. */
 .card-front {
-	color: #2c3e50; /* 深藍灰色文字 */
-	background: linear-gradient(135deg, #ffffff, #e8f4fc); /* 漸變背景 */
-	border-left: 5px solid #3498db; /* 藍色左邊框 */
+	color: #11222d;
+	/* Additional styles here (e.g., background-color: #bbccdd;) */
 }
 
 /* Add styles for additional elements on the front side here. Here is an example: */
+
 #front-word {
 	font-size: 200%;
-	color: #3498db; /* 藍色單詞 */
-	text-shadow: 1px 1px 2px rgba(52, 152, 219, 0.2); /* 文字陰影 */
 }
 
 /* Styles for the back side of the card. */
@@ -226,45 +228,32 @@ main {
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
 	gap: 0.5rem;
-	background: linear-gradient(135deg, #ffffff, #eafaf1); /* 綠色漸變背景 */
-	border-left: 5px solid #2ecc71; /* 綠色左邊框 */
-	color: #2c3e50; /* 深藍灰色文字 */
+	/* Additional styles here (e.g., background-color: #bbddcc;) */
 }
 
 /* Add styles for additional elements on the back side here. Here are some examples: */
+
 #back-pos {
 	padding: 1px 3px;
-	color: #7f8c8d; /* 中灰色 */
-	border: 1px solid #7f8c8d; /* 中灰色邊框 */
-	border-radius: 4px;
+	color: #777;
+	border: 1px solid #777;
+	border-radius: 2px;
 	font-size: 90%;
-	background-color: rgba(236, 240, 241, 0.5); /* 半透明灰色背景 */
 }
 
 #back-image {
 	grid-column: 2 / 3;
 	grid-row: 1 / 2;
-	border: 2px solid #3498db; /* 藍色圖片邊框 */
-	border-radius: 8px;
-	overflow: hidden;
 }
 
 #back-audio {
 	grid-column: 1 / 2;
 	grid-row: 2 / 3;
-	background-color: #f5f9fc; /* 淺藍色背景 */
-	border-radius: 8px;
-	padding: 5px;
-	border: 1px solid #bdc3c7; /* 淺灰色邊框 */
 }
 
 #back-video {
 	grid-column: 2 / 3;
 	grid-row: 2 / 3;
-	background-color: #f5f9fc; /* 淺藍色背景 */
-	border-radius: 8px;
-	overflow: hidden;
-	border: 1px solid #bdc3c7; /* 淺灰色邊框 */
 }
 
 /* STUDENTS: End of recommended modifications */
@@ -278,20 +267,18 @@ main {
 
 button {
 	appearance: none;
-	border: none;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 	padding: 0.5rem 2rem;
 	border-radius: 0.5rem;
-	background-color: #3498db; /* 藍色按鈕 */
-	color: white; /* 白色文字 */
+	background-color: #ddf5ff;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	transition: background-color 0.3s, box-shadow 0.3s;
 	cursor: pointer;
-	font-weight: bold;
 }
 
 button:hover {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	background-color: #2980b9; /* 深藍色懸停效果 */
+	background-color: #c1eaff;
 }
 
 #btns-progress {
@@ -301,25 +288,13 @@ button:hover {
 
 /* Different background colours help distinguish button actions. */
 #btn-again {
-	background-color: #28004D; /* 紅色再次按鈕 */
-}
-
-#btn-again:hover {
-	background-color: #c0392b; /* 深紅色懸停效果 */
+	background-color: #ffcccc;
 }
 
 #btn-good {
-	background-color: #FF359A; /* 綠色良好按鈕 */
-}
-
-#btn-good:hover {
-	background-color: #27ae60; /* 深綠色懸停效果 */
+	background-color: #ccffcc;
 }
 
 #btn-easy {
-	background-color: #9b59b6; /* 紫色簡單按鈕 */
-}
-
-#btn-easy:hover {
-	background-color: #8e44ad; /* 深紫色懸停效果 */
+	background-color: #ccccff;
 }
