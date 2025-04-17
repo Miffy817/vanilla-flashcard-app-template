@@ -190,6 +190,7 @@ main {
 #entries th, #entries td {
 	padding: 0.75rem;
 	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
 }
 
 #entries th {
@@ -218,8 +219,13 @@ main {
 
 #entries tbody tr:hover {
 	background-color: #f1f1f1;
+	background-color: #f1f1f1;
 }
 
+/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
+	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
+	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
+	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
 /* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
 	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
 	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
@@ -243,9 +249,11 @@ main {
 
 .row-highlight {
 	background-color: #fff3cd;
+	background-color: #fff3cd;
 }
 
 .overdue-date {
+	color: #d9534f;
 	color: #d9534f;
 	font-weight: bold;
 }
