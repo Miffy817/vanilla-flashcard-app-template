@@ -30,75 +30,154 @@ h1, h2, h3, h4, h5, h6 {
 }
 /* End of CSS reset */
 
+/* CSS Variables for consistent theming */
+:root {
+    --primary-color: #0078d4;
+    --primary-light: #ddf5ff;
+    --primary-dark: #005488;
+    --accent-color: #56c6ff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --card-bg: #ffffff;
+    --bg-color: #f4f8fb;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+    --border-radius-sm: 0.5rem;
+    --border-radius-md: 1rem;
+    --border-radius-lg: 1.5rem;
+    --transition-speed: 0.3s;
+    --again-color: #ffcccc;
+    --good-color: #ccffcc;
+    --easy-color: #ccccff;
+}
+
 /* Applies a custom font and centers the page using a grid layout. */
 html {
-	font-family: "Playpen Sans", fantasy;
-	font-size: clamp(12px, 0.5vw + 9.6px, 16px);
-	width: 100%;
-	height: 100%;
-	display: grid;
-	place-items: center;
-	background-color: #f0f7ff; /* 更淺的藍色背景 */
-	overflow: hidden;
+    font-family: "Playpen Sans", system-ui, sans-serif;
+    font-size: clamp(12px, 0.5vw + 9.6px, 16px);
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden;
 }
 
 body {
-	display: contents;
+    display: contents;
 }
 
 /* Arranges the main content into rows for header, flashcard area, and actions. */
 main {
-	padding: 1rem;
-	width: 100%;
-	height: 100%;
-	display: grid;
-	grid-template-rows: auto 1fr auto;
-	gap: 1rem;
-	max-width: 60rem;
+    padding: 1.5rem;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 1.5rem;
+    max-width: 70rem;
 }
 
-/* Styles the header with a title and a toggle button for the entries list. */
+/* Modern header styling with improved visual hierarchy */
 #header {
-	color: #2c3e50; /* 深藍灰色標題 */
-	line-height: 1;
+    color: var(--primary-dark);
+    line-height: 1.2;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #toggle-entries {
-	display: inline-block;
-	width: 2.5rem;
-	font-size: 70%;
-	font-weight: 900;
-	text-align: center;
-	cursor: pointer;
-	transform: rotate(88deg);
-	transform-origin: 60% 60%;
-	transition: color 0.3s;
-	color: #3498db; /* 藍色切換按鈕 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 80%;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 2rem;
+    background-color: var(--primary-light);
+    transition: all var(--transition-speed);
+    color: var(--primary-color);
+}
+
+.toggle-icon {
+    font-size: 150%;
+}
+
+.toggle-text {
+    display: none;
 }
 
 #toggle-entries:hover {
-	color: #2980b9; /* 深藍色懸停效果 */
+    color: var(--primary-dark);
+    background-color: var(--accent-color);
+    transform: scale(1.05);
 }
 
-/* The entries list, which is overlaid on top of the flashcard area. */
+#toggle-entries:hover .toggle-text {
+    display: inline;
+}
+
+/* Style for the image analyzer link in the header */
+#image-analyzer-link {
+    margin-left: auto;
+    font-size: 140%;
+    text-decoration: none;
+    transition: transform var(--transition-speed);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+#image-analyzer-link:hover {
+    transform: scale(1.1);
+    background-color: var(--accent-color);
+}
+
+/* Enhanced entries panel styling */
 #entries {
-	position: relative;
-	grid-row: 2 / 3;
-	grid-column: 1 / 2;
-	height: 100%;
-	background-color: rgba(255, 255, 255, 0.95); /* 更不透明的白色背景 */
-	border: 1px solid rgba(52, 152, 219, 0.2); /* 淺藍色邊框 */
-	display: none;
-	opacity: 0;
-	transition: display 0.3s allow-discrete, opacity 0.3s;
-	z-index: 1;
-	border-radius: 1rem;
+    position: relative;
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.98);  /* More opaque background */
+    border: 1px solid rgba(0, 0, 0, 0.15);        /* Slightly more visible border */
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 10;                                  /* Higher z-index to ensure visibility */
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);                 /* Stronger shadow for more depth */
 }
 
 #entries-inner {
 	position: absolute;
 	inset: 0;
 	overflow-y: auto;
+}
+
+/* Add styling for the empty state message */
+#entries-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
 }
 
 /* Table settings and row hover effects for the entries list. */
@@ -110,12 +189,13 @@ main {
 
 #entries th, #entries td {
 	padding: 0.75rem;
-	border-bottom: 1px solid #bdc3c7; /* 淺灰色邊框 */
+	border-bottom: 1px solid #ddd;
 }
 
 #entries th {
-	background-color: #3498db; /* 藍色表頭 */
-	color: white; /* 白色文字 */
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 600;
 }
 
 #entries th:first-child {
@@ -137,189 +217,212 @@ main {
 }
 
 #entries tbody tr:hover {
-	background-color: #ecf0f1; /* 淺灰色懸停效果 */
+	background-color: #f1f1f1;
 }
 
-/* Toggle entries checkbox effects */
+/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
+	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
+	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
+	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
 #toggle-entries-checkbox:checked ~ main #entries {
 	display: block;
 	opacity: 1;
-	@starting-style {
-		opacity: 0;
-	}
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+#toggle-entries-checkbox:checked ~ main #toggle-entries {
+    background-color: var(--accent-color);
+    color: var(--primary-dark);
+    box-shadow: var(--shadow-md);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .row-highlight {
-	background-color: #fff7e6; /* 淺橙色高亮 */
+	background-color: #fff3cd;
 }
 
 .overdue-date {
-	color: #e74c3c; /* 紅色過期日期 */
+	color: #d9534f;
 	font-weight: bold;
 }
 
-/* The flashcard container, which uses perspective to allow a 3D flip animation. */
+/* Improved flashcard container styling with enhanced 3D effect */
 #flashcard {
-	grid-row: 2 / 3;
-	grid-column: 1 / 2;
-	height: 100%;
-	position: relative;
-	perspective: 60rem;
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    height: 100%;
+    position: relative;
+    perspective: 80rem;
 }
 
 #card-inner {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	transform-style: preserve-3d;
-	transition: transform 0.6s;
-	cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
 }
 
-/* Card flip effect */
 #flip-card-checkbox:checked ~ main #card-inner {
-	transform: rotateY(180deg);
+    transform: rotateY(180deg);
 }
 
 .card {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	backface-visibility: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 2rem;
-	background-color: #ffffff; /* 純白色卡片背景 */
-	border: 1px solid rgba(52, 152, 219, 0.3); /* 藍色卡片邊框 */
-	font-size: 150%;
-	border-radius: 1rem;
-	box-shadow: 0 4px 6px rgba(52, 152, 219, 0.1); /* 藍色陰影 */
-	transition: box-shadow 0.3s;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: var(--card-bg);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 150%;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--transition-speed);
 }
 
 .card:hover {
-	box-shadow: 0 8px 16px rgba(52, 152, 219, 0.2); /* 更強的藍色陰影 */
+    box-shadow: var(--shadow-md);
 }
 
-/* STUDENTS: Start of recommended modifications */
-/* You can alter colours, fonts, sizing, or layout for .card-front and .card-back below. */
-
-/* Styles for the front side of the card. */
+/* Enhanced front card styling */
 .card-front {
-	color: #2c3e50; /* 深藍灰色文字 */
-	background: linear-gradient(135deg, #ffffff, #e8f4fc); /* 漸變背景 */
-	border-left: 5px solid #3498db; /* 藍色左邊框 */
+    color: var(--text-color);
+    background: linear-gradient(145deg, #ffffff, #f7f9fc);
 }
 
-/* Add styles for additional elements on the front side here. Here is an example: */
 #front-word {
-	font-size: 200%;
-	color: #3498db; /* 藍色單詞 */
-	text-shadow: 1px 1px 2px rgba(52, 152, 219, 0.2); /* 文字陰影 */
+    font-size: 220%;
+    font-weight: 700;
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Styles for the back side of the card. */
+/* Enhanced back card styling with better organized layout */
 .card-back {
-	transform: rotateY(180deg);
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr 1fr;
-	gap: 0.5rem;
-	background: linear-gradient(135deg, #ffffff, #eafaf1); /* 綠色漸變背景 */
-	border-left: 5px solid #2ecc71; /* 綠色左邊框 */
-	color: #2c3e50; /* 深藍灰色文字 */
+    transform: rotateY(180deg);
+    background: linear-gradient(145deg, #ffffff, #f8fcff);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 1rem;
+    padding: 2rem;
 }
 
-/* Add styles for additional elements on the back side here. Here are some examples: */
 #back-pos {
-	padding: 1px 3px;
-	color: #7f8c8d; /* 中灰色 */
-	border: 1px solid #7f8c8d; /* 中灰色邊框 */
-	border-radius: 4px;
-	font-size: 90%;
-	background-color: rgba(236, 240, 241, 0.5); /* 半透明灰色背景 */
+    padding: 0.3rem 0.6rem;
+    color: white;
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius-sm);
+    font-size: 90%;
+    font-weight: 600;
+    text-transform: uppercase;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    justify-self: start;
+}
+
+#back-definition {
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    font-size: 110%;
+    line-height: 1.5;
+    color: var(--text-color);
+    text-align: left;
+    width: 100%;
+    margin-bottom: 1rem;
 }
 
 #back-image {
-	grid-column: 2 / 3;
-	grid-row: 1 / 2;
-	border: 2px solid #3498db; /* 藍色圖片邊框 */
-	border-radius: 8px;
-	overflow: hidden;
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    justify-self: end;
+    max-height: 6rem;
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
 }
 
 #back-audio {
-	grid-column: 1 / 2;
-	grid-row: 2 / 3;
-	background-color: #f5f9fc; /* 淺藍色背景 */
-	border-radius: 8px;
-	padding: 5px;
-	border: 1px solid #bdc3c7; /* 淺灰色邊框 */
+    grid-column: 1 / 2;
+    grid-row: 3 / 4;
+    width: 100%;
 }
 
 #back-video {
-	grid-column: 2 / 3;
-	grid-row: 2 / 3;
-	background-color: #f5f9fc; /* 淺藍色背景 */
-	border-radius: 8px;
-	overflow: hidden;
-	border: 1px solid #bdc3c7; /* 淺灰色邊框 */
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+    width: 100%;
+    border-radius: var(--border-radius-sm);
 }
 
-/* STUDENTS: End of recommended modifications */
-
-/* The actions area, which contains buttons for different actions. */
+/* Improved action buttons styling */
 #actions {
-	display: flex;
-	justify-content: space-between;
-	gap: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 button {
-	appearance: none;
-	border: none;
-	padding: 0.5rem 2rem;
-	border-radius: 0.5rem;
-	background-color: #3498db; /* 藍色按鈕 */
-	color: white; /* 白色文字 */
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	transition: background-color 0.3s, box-shadow 0.3s;
-	cursor: pointer;
-	font-weight: bold;
+    appearance: none;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-speed);
+    cursor: pointer;
 }
 
 button:hover {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	background-color: #2980b9; /* 深藍色懸停效果 */
+    box-shadow: var(--shadow-md);
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
 }
 
-#btns-progress {
-	display: flex;
-	gap: 0.5rem;
-}
-
-/* Different background colours help distinguish button actions. */
-#btn-again {
-	background-color: #e74c3c; /* 紅色再次按鈕 */
-}
-
-#btn-again:hover {
-	background-color: #c0392b; /* 深紅色懸停效果 */
-}
-
-#btn-good {
-	background-color: #2ecc71; /* 綠色良好按鈕 */
-}
-
-#btn-good:hover {
-	background-color: #27ae60; /* 深綠色懸停效果 */
-}
-
-#btn-easy {
-	background-color: #9b59b6; /* 紫色簡單按鈕 */
-}
-
-#btn-easy:hover {
-	background-color: #8e44ad; /* 深紫色懸停效果 */
+/* Media queries for better responsiveness */
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+        gap: 1rem;
+    }
+    
+    .card-back {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+    }
+    
+    #back-image {
+        grid-column: 1 / 2;
+        grid-row: 3 / 4;
+        justify-self: center;
+        margin: 1rem 0;
+    }
+    
+    #back-audio, #back-video {
+        grid-column: 1 / 2;
+    }
+    
+    #back-audio {
+        grid-row: 4 / 5;
+    }
+    
+    #back-video {
+        grid-row: 5 / 6;
+        margin-top: 0.5rem;
+    }
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Image Word Analyzer - Flashcards</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="./index.css" />
+		<link rel="stylesheet" href="./ai-styles.css" />
+	</head>
+	<body>
+		<main>
+			<header id="header">
+				<a href="index.html" id="back-to-cards" title="Back to Flashcards">←</a>
+				<h1>Image Word Analyzer</h1>
+			</header>
+			
+			<section id="image-analyzer">
+				<form id="image-upload-form">
+					<div class="upload-container">
+						<input type="file" id="image-input" accept="image/*" required>
+						<button type="submit" id="analyze-btn">Analyze Image</button>
+					</div>
+				</form>
+				
+				<div id="analysis-results">
+					<div id="loading-indicator">
+						<div class="spinner"></div>
+						<p>Analyzing image...</p>
+					</div>
+					<div id="preview-container">
+						<img id="image-preview" alt="Preview">
+					</div>
+					
+					<div id="processing-status">
+						<p id="status-message"></p>
+					</div>
+				</div>
+			</section>
+		</main>
+		
+		<script src="./ai.js" type="module"></script>
+	</body>
+</html>

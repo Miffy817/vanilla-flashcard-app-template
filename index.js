@@ -1,5 +1,20 @@
 import example from "./data/example.json" with { type: "json" };
 
+// Load custom flashcards from local storage
+function loadCustomFlashcards() {
+    try {
+        const stored = localStorage.getItem('customFlashcards');
+        return stored ? JSON.parse(stored) : [];
+    } catch (error) {
+        console.error('Error loading custom flashcards:', error);
+        return [];
+    }
+}
+
+// Combine example and custom flashcards
+const customFlashcards = loadCustomFlashcards();
+const allFlashcards = [...example, ...customFlashcards];
+
 /** Loads flashcard progress from local storage if available. */
 function loadProgress() {
 	const stored = localStorage.getItem("flashcardProgress");
@@ -13,7 +28,7 @@ function saveProgress(progress) {
 
 // Sorts the flashcards by their due date to prioritise learning.
 const progressData = loadProgress();
-const cards = example
+const cards = allFlashcards
 	.sort((a, b) => {
 		// Put cards without a dueDate at the last
 		const dateA = progressData[a.id]?.dueDate ? new Date(progressData[a.id].dueDate) : Infinity;
@@ -21,18 +36,35 @@ const cards = example
 		return dateA - dateB;
 	});
 
+console.log(`Loaded ${cards.length} flashcards`);
+
 let currentIndex = 0;
 
 const entriesBody = document.getElementById("entries-body");
 
 /** Creates a table row for each card, allowing quick navigation. */
 function initEntries() {
+	// Clear existing entries first
+	entriesBody.innerHTML = '';
+	
+	// Check if we have any cards
+	if (cards.length === 0) {
+		document.getElementById("entries-empty").style.display = "block";
+		return;
+	}
+	
+	document.getElementById("entries-empty").style.display = "none";
+	
 	// Build table rows
 	cards.forEach((card, i) => {
 		const row = document.createElement("tr");
 		row.addEventListener("click", () => {
 			currentIndex = i;
 			renderCard();
+			// Close the entries panel after selection on mobile
+			if (window.innerWidth <= 768) {
+				document.getElementById("toggle-entries-checkbox").checked = false;
+			}
 		});
 		const cellId = document.createElement("td");
 		cellId.textContent = card.id;
@@ -46,6 +78,9 @@ function initEntries() {
 		row.appendChild(cellDue);
 		entriesBody.appendChild(row);
 	});
+	
+	// Call updateEntries to highlight the current card
+	updateEntries();
 }
 
 /** Updates highlighted row and due dates each time we render or change data. */
@@ -156,39 +191,7 @@ document.getElementById("btn-skip").addEventListener("click", () => {
 	renderCard();
 });
 
-/**
- * Mapping between the user's selection (Again, Good, Easy) and the number of days to wait before reviewing the card again.
- */
-const dayOffset = { again: 1, good: 3, easy: 7 };
-
-/**
- * Records learning progress by updating the card's due date based on the user's selection (Again, Good, Easy).
- */
-function updateDueDate(type) {
-	const card = cards[currentIndex];
-	const today = new Date();
-	const dueDate = new Date(today.setDate(today.getDate() + dayOffset[type]) - today.getTimezoneOffset() * 60 * 1000);
-	(progressData[card.id] ||= {}).dueDate = dueDate.toISOString().split("T")[0]; // Print the date in YYYY-MM-DD format
-	saveProgress(progressData);
-	updateEntries();
-}
-
-document.getElementById("btn-again").addEventListener("click", () => {
-	updateDueDate("again");
-	nextCard();
-	renderCard();
-});
-document.getElementById("btn-good").addEventListener("click", () => {
-	updateDueDate("good");
-	nextCard();
-	renderCard();
-});
-document.getElementById("btn-easy").addEventListener("click", () => {
-	updateDueDate("easy");
-	nextCard();
-	renderCard();
-});
-
 // Initial render
 initEntries();
 renderCard();
+console.log("Entries initialized");
