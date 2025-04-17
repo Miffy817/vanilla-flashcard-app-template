@@ -16,12 +16,14 @@
 		<input type="checkbox" id="toggle-entries-checkbox" hidden />
 		<input type="checkbox" id="flip-card-checkbox" hidden />
 		<input type="checkbox" id="toggle-tools-checkbox" hidden />
+		<input type="checkbox" id="toggle-playlist-checkbox" hidden />
 		<main>
 			<!-- The header includes a button to show/hide all flashcard entries. -->
 			<h1 id="header">
 				<label for="toggle-entries-checkbox" id="toggle-entries" title="Show All Entries">|||</label>
 				Vanilla Flashcard App Template
 				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">🖼️</label>
+				<label for="toggle-playlist-checkbox" id="toggle-playlist" title="Manage Playlists">📑</label>
 			</h1>
 			<!-- This section displays a table of all cards for quick access. -->
 			<section id="entries">
@@ -75,6 +77,37 @@
 					</div>
 				</div>
 			</section>
+			 <!-- New Playlist Management Section -->
+            <section id="playlist-section">
+                <div id="playlist-container">
+                    <div class="playlist-panel tool-panel">
+                        <h2>Playlist Management</h2>
+                        <div class="form-group">
+                            <label for="playlist-name">New Playlist Name:</label>
+                            <input type="text" id="playlist-name" placeholder="Enter playlist name" />
+                            <button id="btn-create-playlist" class="primary-button">Create Playlist</button>
+                        </div>
+                        <div id="playlist-list">
+                            <h3>Your Playlists</h3>
+                            <div id="playlist-items"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Add to Playlist Modal -->
+            <div id="playlist-modal" class="modal">
+                <div class="modal-content">
+                    <h3>Add to Playlist</h3>
+                    <div id="playlist-checkboxes">
+                        <!-- Playlists will be dynamically added here -->
+                    </div>
+                    <div class="modal-actions">
+                        <button id="btn-save-to-playlist" class="primary-button">Save</button>
+                        <button id="btn-close-modal" class="secondary-button">Cancel</button>
+                    </div>
+                </div>
+            </div>
 			<!-- Status of the operation in progress -->
 			<div id="operation-feedback">
 				<div id="operation-progress-container">
@@ -91,6 +124,7 @@
 						<div class="card-front-container">
 							<img id="front-image" />
 							<h2 id="front-word"></h2>
+							<button id="btn-add-to-playlist" class="heart-button" title="Add to Playlist">♡</button>
 						</div>
 					</div>
 					<div class="card card-back">
