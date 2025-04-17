@@ -1,42 +1,37 @@
-import example from "./data/example.json" with { type: "json" };
+import "./actions.js";
+import { openDB } from "https://cdn.jsdelivr.net/npm/idb@8/+esm";
 
-// Load custom flashcards from local storage
-function loadCustomFlashcards() {
-    try {
-        const stored = localStorage.getItem('customFlashcards');
-        return stored ? JSON.parse(stored) : [];
-    } catch (error) {
-        console.error('Error loading custom flashcards:', error);
-        return [];
-    }
+// IndexedDB initialization
+export let db;
+let cards = [];
+
+async function initDB() {
+	db = await openDB("flashcardDB", 1, {
+		upgrade(db) {
+			if (!db.objectStoreNames.contains("cards")) {
+				db.createObjectStore("cards", { keyPath: "id" });
+			}
+		}
+	});
+
+	return reloadCardsFromDB();
 }
 
-// Combine example and custom flashcards
-const customFlashcards = loadCustomFlashcards();
-const allFlashcards = [...example, ...customFlashcards];
+export async function reloadCardsFromDB() {
+	// Get all cards from DB
+	cards = await db.getAll("cards");
 
-/** Loads flashcard progress from local storage if available. */
-function loadProgress() {
-	const stored = localStorage.getItem("flashcardProgress");
-	return stored ? JSON.parse(stored) : {};
-}
-
-/** Saves the current progress back to local storage. */
-function saveProgress(progress) {
-	localStorage.setItem("flashcardProgress", JSON.stringify(progress));
-}
-
-// Sorts the flashcards by their due date to prioritise learning.
-const progressData = loadProgress();
-const cards = allFlashcards
-	.sort((a, b) => {
-		// Put cards without a dueDate at the last
-		const dateA = progressData[a.id]?.dueDate ? new Date(progressData[a.id].dueDate) : Infinity;
-		const dateB = progressData[b.id]?.dueDate ? new Date(progressData[b.id].dueDate) : Infinity;
+	// Sort cards by due date
+	cards.sort((a, b) => {
+		const dateA = a.progress?.dueDate ? new Date(a.progress.dueDate) : Infinity;
+		const dateB = b.progress?.dueDate ? new Date(b.progress.dueDate) : Infinity;
 		return dateA - dateB;
 	});
 
-console.log(`Loaded ${cards.length} flashcards`);
+	// Render the UI
+	initEntries();
+	renderCard();
+}
 
 let currentIndex = 0;
 
@@ -44,43 +39,76 @@ const entriesBody = document.getElementById("entries-body");
 
 /** Creates a table row for each card, allowing quick navigation. */
 function initEntries() {
-	// Clear existing entries first
-	entriesBody.innerHTML = '';
-	
-	// Check if we have any cards
-	if (cards.length === 0) {
-		document.getElementById("entries-empty").style.display = "block";
-		return;
-	}
-	
-	document.getElementById("entries-empty").style.display = "none";
-	
+	// Clear existing rows
+	entriesBody.innerHTML = "";
+
 	// Build table rows
 	cards.forEach((card, i) => {
 		const row = document.createElement("tr");
 		row.addEventListener("click", () => {
 			currentIndex = i;
 			renderCard();
-			// Close the entries panel after selection on mobile
-			if (window.innerWidth <= 768) {
-				document.getElementById("toggle-entries-checkbox").checked = false;
-			}
 		});
-		const cellId = document.createElement("td");
-		cellId.textContent = card.id;
+
+		const cellImage = document.createElement("td");
+		const img = document.createElement("img");
+		img.src = URL.createObjectURL(card.image);
+		img.className = "entries-image";
+		cellImage.appendChild(img);
+
 		const cellWord = document.createElement("td");
 		cellWord.textContent = card.word;
-		const cellDue = document.createElement("td");
-		cellDue.textContent = progressData[card.id]?.dueDate || "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
 
-		row.appendChild(cellId);
+		const cellDue = document.createElement("td");
+		cellDue.textContent = card.progress?.dueDate || "Unseen"; // If the card has not been learnt before, mark it as "Unseen"
+
+		const cellAction = document.createElement("td");
+		const deleteBtn = document.createElement("button");
+		deleteBtn.textContent = "🗑️";
+		deleteBtn.className = "delete-btn";
+		deleteBtn.addEventListener("click", event => {
+			event.stopPropagation(); // Prevent row click
+			deleteCard(card.id, i);
+		});
+		cellAction.appendChild(deleteBtn);
+
+		row.appendChild(cellImage);
 		row.appendChild(cellWord);
 		row.appendChild(cellDue);
+		row.appendChild(cellAction);
 		entriesBody.appendChild(row);
 	});
-	
-	// Call updateEntries to highlight the current card
-	updateEntries();
+}
+
+// Function to delete a card
+async function deleteCard(cardId, index) {
+	if (!confirm("Are you sure you want to delete this flashcard?")) {
+		return;
+	}
+
+	try {
+		// Delete from the database
+		await db.delete("cards", cardId);
+
+		// Remove from local array
+		cards.splice(index, 1);
+
+		// Re-render entries
+		initEntries();
+
+		// Adjust current index if needed
+		if (cards.length === 0) {
+			// No cards left
+			currentIndex = 0;
+		} else if (currentIndex >= cards.length) {
+			// Current card was deleted, move to the last card
+			currentIndex = cards.length - 1;
+		}
+
+		renderCard();
+	} catch (error) {
+		console.error("Error deleting card:", error);
+	}
 }
 
 /** Updates highlighted row and due dates each time we render or change data. */
@@ -90,8 +118,8 @@ function updateEntries() {
 		const row = entriesBody.children[i];
 		row.classList.toggle("row-highlight", i === currentIndex);
 
-		const cellDue = row.children[row.childElementCount - 1];
-		const dueDateString = progressData[card.id]?.dueDate;
+		const cellDue = row.children[2]; // Due date is at index 2
+		const dueDateString = card.progress?.dueDate;
 		if (dueDateString) {
 			cellDue.textContent = dueDateString;
 			// If the due date is earlier than today, mark it as overdue
@@ -113,16 +141,20 @@ const posMapping = {
 	n: "noun",
 	v: "verb",
 	adj: "adjective",
+	adv: "adverb",
 	// Add more mappings as needed
 };
 
 // Grabs references to the flashcard UI elements needed to display data.
 const frontWord = document.getElementById("front-word");
-const backPos = document.getElementById("back-pos");
+const frontImage = document.getElementById("front-image");
+const backWord = document.getElementById("back-word");
+const backPronunciationUK = document.getElementById("back-pronunciation-uk");
+const backPronunciationUS = document.getElementById("back-pronunciation-us");
+const backPosContainer = document.getElementById("back-pos-container");
 const backDefinition = document.getElementById("back-definition");
+const backExample = document.getElementById("back-example");
 const backImage = document.getElementById("back-image");
-const backAudio = document.getElementById("back-audio");
-const backVideo = document.getElementById("back-video");
 
 const flipCardCheckbox = document.getElementById("flip-card-checkbox");
 const cardInner = document.getElementById("card-inner");
@@ -130,6 +162,22 @@ const transitionHalfDuration = parseFloat(getComputedStyle(cardInner).transition
 
 /** Renders the current card on both front and back. */
 function renderCard() {
+	if (cards.length === 0) {
+		frontWord.textContent = "No flashcards available";
+		flipCardCheckbox.checked = false;
+
+		// Clear all fields
+		frontImage.removeAttribute("src");
+		backWord.textContent = "";
+		backPronunciationUK.textContent = "—";
+		backPronunciationUS.textContent = "—";
+		backPosContainer.innerHTML = "";
+		backDefinition.textContent = "";
+		backExample.textContent = "";
+		backImage.removeAttribute("src");
+		return;
+	}
+
 	// STUDENTS: Start of recommended modifications
 	// If there are more fields in the dataset (e.g., synonyms, example sentences),
 	// display them here (e.g., backSynonym.textContent = currentCard.synonym).
@@ -138,34 +186,51 @@ function renderCard() {
 	const currentCard = cards[currentIndex];
 	frontWord.textContent = currentCard.word;
 
+	// Display image on front side
+	frontImage.src = URL.createObjectURL(currentCard.image);
+
 	// Reset flashcard to the front side
 	flipCardCheckbox.checked = false;
 
 	// Wait for the back side to become invisible before updating the content
 	setTimeout(() => {
-		backPos.textContent = posMapping[currentCard.pos] || currentCard.pos;
-		backDefinition.textContent = currentCard.definition;
+		// Update word on back side
+		backWord.textContent = currentCard.word;
 
-		if (currentCard.image) {
-			backImage.src = currentCard.image;
-			backImage.style.display = "block";
-		} else {
-			backImage.style.display = "none";
+		// Update pronunciations
+		backPronunciationUK.textContent = currentCard.pronunciationUK || "—";
+		backPronunciationUS.textContent = currentCard.pronunciationUS || "—";
+
+		// Clear previous parts of speech
+		backPosContainer.innerHTML = "";
+
+		// Create a span for each part of speech
+		for (const pos of Array.isArray(currentCard.pos) ? currentCard.pos : [currentCard.pos]) {
+			const span = document.createElement("span");
+			span.className = "back-pos";
+			span.textContent = posMapping[pos] || pos;
+			backPosContainer.appendChild(span);
 		}
 
-		if (currentCard.audio) {
-			backAudio.src = currentCard.audio;
-			backAudio.style.display = "block";
-		} else {
-			backAudio.style.display = "none";
-		}
+		// Update definition
+		backDefinition.textContent = currentCard.definition || "";
 
-		if (currentCard.video) {
-			backVideo.src = currentCard.video;
-			backVideo.style.display = "block";
-		} else {
-			backVideo.style.display = "none";
-		}
+		// Update example sentence
+		backExample.textContent = currentCard.exampleSentence || "";
+
+		// Update image on back side
+		backImage.src = URL.createObjectURL(currentCard.image);
+		
+		// Update audio players
+        const audioUK = document.getElementById("back-audio-uk");
+        const audioUS = document.getElementById("back-audio-us");
+        
+        if (currentCard.audioUK) {
+            audioUK.src = currentCard.audioUK;
+        }
+        if (currentCard.audioUS) {
+            audioUS.src = currentCard.audioUS;
+        }
 	}, transitionHalfDuration);
 	// STUDENTS: End of recommended modifications
 
@@ -191,7 +256,44 @@ document.getElementById("btn-skip").addEventListener("click", () => {
 	renderCard();
 });
 
-// Initial render
-initEntries();
-renderCard();
-console.log("Entries initialized");
+/**
+ * Mapping between the user's selection (Again, Good, Easy) and the number of days to wait before reviewing the card again.
+ */
+const dayOffset = { again: 1, good: 3, easy: 7 };
+
+/**
+ * Records learning progress by updating the card's due date based on the user's selection (Again, Good, Easy).
+ */
+async function updateDueDate(type) {
+	const card = cards[currentIndex];
+	const today = new Date();
+	const dueDate = new Date(today.setDate(today.getDate() + dayOffset[type]) - today.getTimezoneOffset() * 60 * 1000);
+	const dueDateString = dueDate.toISOString().split("T")[0]; // Format in YYYY-MM-DD format
+
+	// Update card's progress in memory
+	(card.progress ??= {}).dueDate = dueDateString;
+
+	// Save to IndexedDB
+	await db.put("cards", card);
+
+	updateEntries();
+}
+
+document.getElementById("btn-again").addEventListener("click", async () => {
+	await updateDueDate("again");
+	nextCard();
+	renderCard();
+});
+document.getElementById("btn-good").addEventListener("click", async () => {
+	await updateDueDate("good");
+	nextCard();
+	renderCard();
+});
+document.getElementById("btn-easy").addEventListener("click", async () => {
+	await updateDueDate("easy");
+	nextCard();
+	renderCard();
+});
+
+// Initialize database and the app
+initDB();

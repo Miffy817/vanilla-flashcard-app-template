@@ -30,154 +30,255 @@ h1, h2, h3, h4, h5, h6 {
 }
 /* End of CSS reset */
 
-/* CSS Variables for consistent theming */
-:root {
-    --primary-color: #0078d4;
-    --primary-light: #ddf5ff;
-    --primary-dark: #005488;
-    --accent-color: #56c6ff;
-    --text-color: #333333;
-    --text-light: #666666;
-    --card-bg: #ffffff;
-    --bg-color: #f4f8fb;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
-    --border-radius-sm: 0.5rem;
-    --border-radius-md: 1rem;
-    --border-radius-lg: 1.5rem;
-    --transition-speed: 0.3s;
-    --again-color: #ffcccc;
-    --good-color: #ccffcc;
-    --easy-color: #ccccff;
-}
-
 /* Applies a custom font and centers the page using a grid layout. */
 html {
-    font-family: "Playpen Sans", system-ui, sans-serif;
-    font-size: clamp(12px, 0.5vw + 9.6px, 16px);
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    overflow: hidden;
+	font-family: "Playpen Sans", fantasy;
+	font-size: clamp(12px, 0.5vw + 9.6px, 16px);
+	width: 100%;
+	height: 100%;
+	display: grid;
+	place-items: center;
+	background-color: #f4f8fb;
+	overflow: hidden;
 }
 
 body {
-    display: contents;
+	display: contents;
 }
 
 /* Arranges the main content into rows for header, flashcard area, and actions. */
 main {
-    padding: 1.5rem;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 1.5rem;
-    max-width: 70rem;
+	padding: 1rem;
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	gap: 1rem;
+	max-width: 60rem;
 }
 
-/* Modern header styling with improved visual hierarchy */
+/* Styles the header with a title and toggle buttons for the entries list and tools interface. */
 #header {
-    color: var(--primary-dark);
-    line-height: 1.2;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+	color: #002a44;
+	line-height: 1;
 }
 
 #toggle-entries {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    padding: 0.5rem 1rem;
-    font-size: 80%;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 2rem;
-    background-color: var(--primary-light);
-    transition: all var(--transition-speed);
-    color: var(--primary-color);
-}
-
-.toggle-icon {
-    font-size: 150%;
-}
-
-.toggle-text {
-    display: none;
+	display: inline-block;
+	width: 2.5rem;
+	font-size: 70%;
+	font-weight: 900;
+	text-align: center;
+	cursor: pointer;
+	transform: rotate(88deg);
+	transform-origin: 60% 60%;
+	transition: color 0.3s;
+	color: #007acc;
 }
 
 #toggle-entries:hover {
-    color: var(--primary-dark);
-    background-color: var(--accent-color);
-    transform: scale(1.05);
+	color: #005488;
 }
 
-#toggle-entries:hover .toggle-text {
-    display: inline;
+#toggle-tools {
+	display: block;
+	float: right;
+	margin-left: 1rem;
+	cursor: pointer;
+	transition: color 0.3s;
+	color: #007acc;
 }
 
-/* Style for the image analyzer link in the header */
-#image-analyzer-link {
-    margin-left: auto;
-    font-size: 140%;
-    text-decoration: none;
-    transition: transform var(--transition-speed);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    background-color: var(--primary-light);
-    color: var(--primary-color);
+#toggle-tools:hover {
+	color: #005488;
 }
 
-#image-analyzer-link:hover {
-    transform: scale(1.1);
-    background-color: var(--accent-color);
+/* The #toggle-entries element acts as a label for #toggle-entries-checkbox.
+	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
+	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
+	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
+#toggle-entries-checkbox:checked ~ main #entries {
+	display: block;
+	opacity: 1;
+	@starting-style {
+		opacity: 0;
+	}
 }
 
-/* Enhanced entries panel styling */
+/* Toggle visibility of tools interface */
+#toggle-tools-checkbox:checked ~ main :is(#tools-section, #operation-feedback) {
+	display: block;
+	opacity: 1;
+	@starting-style {
+		opacity: 0;
+	}
+}
+
+/* Hide flashcard and the entries list when the tools interface is visible */
+#toggle-tools-checkbox:checked ~ main :is(#entries, #flashcard, #actions) {
+	display: none;
+}
+
+/* Tools interface styles */
+#tools-section {
+	position: relative;
+	grid-row: 2 / 3;
+	grid-column: 1 / 2;
+	height: 100%;
+	background-color: rgba(255, 255, 255, 0.95);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 1rem;
+	display: none;
+	opacity: 0;
+	transition: display 0.3s allow-discrete, opacity 0.3s;
+	z-index: 2;
+}
+
+#tools-container {
+	position: absolute;
+	inset: 0;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.tool-panel {
+	padding: 1.5rem 2rem 2rem;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.tool-panel:last-child {
+	border-bottom: none;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.form-group label {
+	font-weight: bold;
+	color: #002a44;
+}
+
+.form-group input {
+	padding: 0.5rem;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 0.5rem;
+	width: 100%;
+}
+
+#upload-preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	margin-top: 0.5rem;
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+#upload-preview:empty {
+	margin-top: 0;
+}
+
+.preview-image {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.form-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: space-between;
+}
+
+.primary-button {
+	background-color: #007acc;
+	color: white;
+	padding: 0.75rem 2rem;
+}
+
+.primary-button:hover {
+	background-color: #005488;
+}
+
+.secondary-button {
+	background-color: #ddf5ff;
+}
+
+.danger-button {
+	background-color: #ffdddd;
+	color: #d9534f;
+}
+
+.danger-button:hover {
+	background-color: #ffcccc;
+}
+
+#operation-feedback {
+	display: none;
+	background-color: white;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 1rem;
+	padding: 2rem;
+}
+
+#operation-progress-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+#operation-progress {
+	width: 100%;
+	height: 1rem;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+#operation-status {
+	text-align: center;
+	font-size: 0.9rem;
+	color: #002a44;
+}
+
+#operation-results {
+	background-color: rgba(0, 0, 0, 0.05);
+	padding: 1rem;
+	border-radius: 0.5rem;
+	min-height: 3rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* The entries list, which is overlaid on top of the flashcard area. */
 #entries {
-    position: relative;
-    grid-row: 2 / 3;
-    grid-column: 1 / 2;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.98);  /* More opaque background */
-    border: 1px solid rgba(0, 0, 0, 0.15);        /* Slightly more visible border */
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 10;                                  /* Higher z-index to ensure visibility */
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-lg);                 /* Stronger shadow for more depth */
+	position: relative;
+	grid-row: 2 / 3;
+	grid-column: 1 / 2;
+	height: 100%;
+	background-color: rgba(255, 255, 255, 0.9);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	display: none;
+	opacity: 0;
+	transition: display 0.3s allow-discrete, opacity 0.3s;
+	z-index: 1;
+	border-radius: 1rem;
 }
 
 #entries-inner {
 	position: absolute;
 	inset: 0;
 	overflow-y: auto;
-}
-
-/* Add styling for the empty state message */
-#entries-empty {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 2rem;
-    text-align: center;
-    color: var(--text-light);
-    font-style: italic;
 }
 
 /* Table settings and row hover effects for the entries list. */
@@ -190,13 +291,10 @@ main {
 #entries th, #entries td {
 	padding: 0.75rem;
 	border-bottom: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
 }
 
 #entries th {
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-    font-weight: 600;
+	background-color: #ddf5ff;
 }
 
 #entries th:first-child {
@@ -219,218 +317,280 @@ main {
 
 #entries tbody tr:hover {
 	background-color: #f1f1f1;
-	background-color: #f1f1f1;
 }
 
-/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
-	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
-	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
-	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
-/* The #toggle-entries element acts as a label for #toggle-entries-checkbox. 
-	Clicking #toggle-entries changes the state of #toggle-entries-checkbox.
-	When #toggle-entries-checkbox is checked, this ruleset is in effect, and the #entries table becomes visible.
-	Otherwise, the previous rules (display: none; opacity: 0;) inside the #entries ruleset remain effective, and the table is hidden. */
-#toggle-entries-checkbox:checked ~ main #entries {
-	display: block;
-	opacity: 1;
-	animation: fadeIn 0.3s ease-in-out;
+#entries tbody td {
+	padding: 0.25rem;
 }
 
-#toggle-entries-checkbox:checked ~ main #toggle-entries {
-    background-color: var(--accent-color);
-    color: var(--primary-dark);
-    box-shadow: var(--shadow-md);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.entries-image {
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 0.25rem;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .row-highlight {
-	background-color: #fff3cd;
 	background-color: #fff3cd;
 }
 
 .overdue-date {
 	color: #d9534f;
-	color: #d9534f;
 	font-weight: bold;
 }
 
-/* Improved flashcard container styling with enhanced 3D effect */
+/* The flashcard container, which uses perspective to allow a 3D flip animation. */
 #flashcard {
-    grid-row: 2 / 3;
-    grid-column: 1 / 2;
-    height: 100%;
-    position: relative;
-    perspective: 80rem;
+	grid-row: 2 / 3;
+	grid-column: 1 / 2;
+	height: 100%;
+	position: relative;
+	perspective: 60rem;
 }
 
 #card-inner {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	transform-style: preserve-3d;
+	transition: transform 0.6s;
+	cursor: pointer;
 }
 
+/* Rotates the card around the Y-axis when the checkbox is checked such that the back side is visible.
+	It makes use of the same technique as the entries list to toggle the checkbox state when the card is clicked.
+	When the checkbox is no longer checked, the card is rotated back to the front side. */
 #flip-card-checkbox:checked ~ main #card-inner {
-    transform: rotateY(180deg);
+	transform: rotateY(180deg);
 }
 
 .card {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background-color: var(--card-bg);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    font-size: 150%;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--transition-speed);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	backface-visibility: hidden;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fefefe;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	font-size: 150%;
+	border-radius: 1rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: box-shadow 0.3s;
 }
 
 .card:hover {
-    box-shadow: var(--shadow-md);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Enhanced front card styling */
+/* STUDENTS: Start of recommended modifications */
+/* You can alter colours, fonts, sizing, or layout for .card-front and .card-back below. */
+
+/* Styles for the front side of the card. */
 .card-front {
-    color: var(--text-color);
-    background: linear-gradient(145deg, #ffffff, #f7f9fc);
+	/* Additional styles here (e.g., background-color: #bbccdd;) */
+}
+
+.card-front-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#front-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0.9;
 }
 
 #front-word {
-    font-size: 220%;
-    font-weight: 700;
-    text-align: center;
-    color: var(--primary-dark);
-    margin-bottom: 1rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+	position: absolute;
+	font-size: 250%;
+	color: white;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+	text-align: center;
+	padding: 1rem;
+	background-color: rgba(127, 127, 127, 0.5);
+	border-radius: 0.5rem;
+	backdrop-filter: blur(10px);
 }
 
-/* Enhanced back card styling with better organized layout */
+/* Styles for the back side of the card. */
 .card-back {
-    transform: rotateY(180deg);
-    background: linear-gradient(145deg, #ffffff, #f8fcff);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 1rem;
-    padding: 2rem;
+	transform: rotateY(180deg);
 }
 
-#back-pos {
-    padding: 0.3rem 0.6rem;
-    color: white;
-    background-color: var(--primary-color);
-    border-radius: var(--border-radius-sm);
-    font-size: 90%;
-    font-weight: 600;
-    text-transform: uppercase;
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-    justify-self: start;
+.card-back-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	overflow-y: auto;
+}
+
+.back-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	padding-bottom: 0.5rem;
+}
+
+#back-word {
+	font-size: 200%;
+	margin: 0;
+	color: #007acc;
+}
+
+.pronunciation {
+	display: flex;
+	gap: 1rem;
+	font-family: monospace;
+	font-size: 90%;
+}
+
+.pronunciation-label {
+	font-weight: bold;
+	color: #555;
+	margin-right: 0.25rem;
+}
+
+.pronunciation-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.pronunciation-item audio {
+	height: 24px;
+	width: 150px;
+}
+
+.back-content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1rem;
+}
+
+.back-left {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.back-pos-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.back-pos {
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
+	background-color: #f0f0f0;
+	border-radius: 0.25rem;
+	font-size: 90%;
+	color: #555;
 }
 
 #back-definition {
-    grid-column: 1 / -1;
-    grid-row: 2 / 3;
-    font-size: 110%;
-    line-height: 1.5;
-    color: var(--text-color);
-    text-align: left;
-    width: 100%;
-    margin-bottom: 1rem;
+	font-size: 110%;
+	margin: 0;
+}
+
+.example-container {
+	font-style: italic;
+	color: #444;
+	border-left: 3px solid #007acc;
+	padding-left: 0.75rem;
+}
+
+#back-example {
+	margin: 0;
+}
+
+.back-right {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
 }
 
 #back-image {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-    justify-self: end;
-    max-height: 6rem;
-    border-radius: var(--border-radius-sm);
-    box-shadow: var(--shadow-sm);
+	max-height: 100%;
+	object-fit: contain;
+	border-radius: 0.5rem;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#back-audio {
-    grid-column: 1 / 2;
-    grid-row: 3 / 4;
-    width: 100%;
-}
+/* STUDENTS: End of recommended modifications */
 
-#back-video {
-    grid-column: 2 / 3;
-    grid-row: 3 / 4;
-    width: 100%;
-    border-radius: var(--border-radius-sm);
-}
-
-/* Improved action buttons styling */
+/* The actions area, which contains buttons for different actions. */
 #actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: space-between;
+	gap: 0.5rem;
 }
 
 button {
-    appearance: none;
-    border: none;
-    padding: 0.7rem 2rem;
-    border-radius: var(--border-radius-sm);
-    background-color: var(--primary-light);
-    color: var(--primary-dark);
-    font-weight: 600;
-    box-shadow: var(--shadow-sm);
-    transition: all var(--transition-speed);
-    cursor: pointer;
+	appearance: none;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 0.5rem 2rem;
+	border-radius: 0.5rem;
+	background-color: #ddf5ff;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.3s, box-shadow 0.3s;
+	cursor: pointer;
 }
 
 button:hover {
-    box-shadow: var(--shadow-md);
-    background-color: var(--accent-color);
-    transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	background-color: #c1eaff;
 }
 
-/* Media queries for better responsiveness */
-@media (max-width: 768px) {
-    main {
-        padding: 1rem;
-        gap: 1rem;
-    }
-    
-    .card-back {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
-    }
-    
-    #back-image {
-        grid-column: 1 / 2;
-        grid-row: 3 / 4;
-        justify-self: center;
-        margin: 1rem 0;
-    }
-    
-    #back-audio, #back-video {
-        grid-column: 1 / 2;
-    }
-    
-    #back-audio {
-        grid-row: 4 / 5;
-    }
-    
-    #back-video {
-        grid-row: 5 / 6;
-        margin-top: 0.5rem;
-    }
+#btns-progress {
+	display: flex;
+	gap: 0.5rem;
+}
+
+/* Different background colours help distinguish button actions. */
+#btn-again {
+	background-color: #ffcccc;
+}
+
+#btn-good {
+	background-color: #ccffcc;
+}
+
+#btn-easy {
+	background-color: #ccccff;
+}
+
+/* Delete button in entries */
+.delete-btn {
+	background-color: transparent;
+	color: #d9534f;
+	padding: 0.25rem 0.5rem;
+	border: none;
+	box-shadow: none;
+	cursor: pointer;
+	font-size: 1.2rem;
+}
+
+.delete-btn:hover {
+	color: #c9302c;
+	background-color: transparent;
+	box-shadow: none;
 }
