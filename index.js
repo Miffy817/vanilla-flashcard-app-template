@@ -1,6 +1,31 @@
 import "./actions.js";
 import { openDB } from "https://cdn.jsdelivr.net/npm/idb@8/+esm";
 
+// Section management
+const sectionsCheckboxes = [
+    document.getElementById("toggle-entries-checkbox"),
+    document.getElementById("toggle-tools-checkbox"),
+    document.getElementById("toggle-playlist-checkbox")
+];
+
+// Close all sections except the one being opened
+function closeOtherSections(exceptCheckbox) {
+    sectionsCheckboxes.forEach(checkbox => {
+        if (checkbox !== exceptCheckbox) {
+            checkbox.checked = false;
+        }
+    });
+}
+
+// Add event listeners for section toggles
+sectionsCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            closeOtherSections(this);
+        }
+    });
+});
+
 // IndexedDB initialization
 export let db;
 let cards = [];
@@ -79,31 +104,6 @@ function initEntries() {
             }
         } catch (error) {
             console.error("Error creating image URL:", error);
-            img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><rect width="50" height="50" fill="%23ddd"/></svg>';
-        }
-        img.className = "entries-image";
-        img.alt = card.word || "Card image";
-        cellImage.appendChild(img);
-
-        // Word cell
-        const cellWord = document.createElement("td");
-        cellWord.textContent = card.word || "Untitled";
-
-        // Due date cell with formatting
-        const cellDue = document.createElement("td");
-        if (card.progress?.dueDate) {
-            const dueDate = new Date(card.progress.dueDate);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            if (dueDate < today) {
-                cellDue.classList.add("overdue-date");
-            }
-            
-            // Format date as YYYY-MM-DD
-            cellDue.textContent = dueDate.toISOString().split('T')[0];
-        } else {
-            cellDue.textContent = "Unseen";
         }
 
         // Action cell
