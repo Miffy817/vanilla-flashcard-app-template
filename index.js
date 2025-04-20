@@ -4,6 +4,8 @@ import { openDB } from "https://cdn.jsdelivr.net/npm/idb@8/+esm";
 // IndexedDB initialization
 export let db;
 let cards = [];
+let currentIndex = 0;
+let playlistFilter = null; // null = show all, otherwise {id, name, cards: [ids]}
 
 async function initDB() {
     db = await openDB("flashcardDB", 2, {
@@ -25,26 +27,70 @@ async function initDB() {
 
 export async function reloadCardsFromDB() {
     // Get all cards from DB
-    cards = await db.getAll("cards");
+    let allCards = await db.getAll("cards");
 
-    // Sort cards by due date
-    cards.sort((a, b) => {
-        const dateA = a.progress?.dueDate ? new Date(a.progress.dueDate) : Infinity;
-        const dateB = b.progress?.dueDate ? new Date(b.progress.dueDate) : Infinity;
-        return dateA - dateB;
-    });
+    // Filter by playlist if needed
+    if (playlistFilter && Array.isArray(playlistFilter.cards)) {
+        // Only include cards in the playlist, and in the playlist's order
+        cards = playlistFilter.cards
+            .map(id => allCards.find(card => card.id === id))
+            .filter(Boolean);
+    } else {
+        cards = allCards;
+    }
+
+    // Sort cards by due date (unless filtered by playlist, in which case keep playlist order)
+    if (!playlistFilter) {
+        cards.sort((a, b) => {
+            const dateA = a.progress?.dueDate ? new Date(a.progress.dueDate) : Infinity;
+            const dateB = b.progress?.dueDate ? new Date(b.progress.dueDate) : Infinity;
+            return dateA - dateB;
+        });
+    }
+
+    // Reset index if out of bounds
+    if (currentIndex >= cards.length) currentIndex = 0;
 
     // Render the UI
     initEntries();
     renderCard();
 }
 
-let currentIndex = 0;
-
 const entriesBody = document.getElementById("entries-body");
+// Add reference to entries section and checkbox for toggling
+const entriesSection = document.getElementById("entries");
+const entriesCheckbox = document.getElementById("toggle-entries-checkbox");
+
+// Add a container for filter info above the table if not already present
+let filterInfoDiv = document.getElementById("filter-info");
+if (!filterInfoDiv) {
+    filterInfoDiv = document.createElement("div");
+    filterInfoDiv.id = "filter-info";
+    filterInfoDiv.style.display = "none";
+    filterInfoDiv.style.margin = "1rem 0";
+    filterInfoDiv.style.textAlign = "center";
+    filterInfoDiv.style.fontWeight = "bold";
+    filterInfoDiv.style.color = "#007acc";
+    // Insert before entries section
+    entriesSection.parentNode.insertBefore(filterInfoDiv, entriesSection);
+}
 
 /** Creates a table row for each card, allowing quick navigation. */
 function initEntries() {
+    // Show filter info if filtering
+    filterInfoDiv.style.display = playlistFilter ? "block" : "none";
+    filterInfoDiv.innerHTML = "";
+    if (playlistFilter) {
+        filterInfoDiv.innerHTML = `
+            <span>Filtering: Showing flashcards in playlist <strong>${playlistFilter.name}</strong></span>
+            <button id="btn-show-all-cards" style="margin-left:2rem; padding:0.5rem 1.5rem; border-radius:0.5rem; background:#007acc; color:white; border:none; cursor:pointer;">Show All Flashcards</button>
+        `;
+        filterInfoDiv.querySelector("#btn-show-all-cards").onclick = () => {
+            playlistFilter = null;
+            reloadCardsFromDB();
+        };
+    }
+
     // Clear existing rows
     entriesBody.innerHTML = "";
 
@@ -58,6 +104,23 @@ function initEntries() {
         emptyRow.appendChild(emptyCell);
         entriesBody.appendChild(emptyRow);
         return;
+    }
+
+    // Add "Show All" button if filtered
+    if (playlistFilter) {
+        const showAllRow = document.createElement("tr");
+        const showAllCell = document.createElement("td");
+        showAllCell.colSpan = 4;
+        showAllCell.style.textAlign = "center";
+        const showAllBtn = document.createElement("button");
+        showAllBtn.textContent = "Show All Flashcards";
+        showAllBtn.addEventListener("click", () => {
+            playlistFilter = null;
+            reloadCardsFromDB();
+        });
+        showAllCell.appendChild(showAllBtn);
+        showAllRow.appendChild(showAllCell);
+        entriesBody.appendChild(showAllRow);
     }
 
     // Build table rows
@@ -404,6 +467,15 @@ async function loadPlaylists() {
             // Add delete button handler
             div.querySelector('.delete-btn').addEventListener('click', () => deletePlaylist(playlist.id));
             
+            // Add click handler for playlist name to filter main flashcard view and show entries section
+            div.querySelector('.playlist-name').addEventListener('click', () => {
+                playlistFilter = playlist;
+                currentIndex = 0;
+                // Show the entries section (index page)
+                if (entriesCheckbox) entriesCheckbox.checked = true;
+                reloadCardsFromDB();
+            });
+
             playlistItems.appendChild(div);
         });
     } catch (error) {

@@ -393,9 +393,7 @@ main {
 /* You can alter colours, fonts, sizing, or layout for .card-front and .card-back below. */
 
 /* Styles for the front side of the card. */
-.card-front {
-	/* Additional styles here (e.g., background-color: #bbccdd;) */
-}
+
 
 .card-front-container {
 	position: relative;
@@ -759,7 +757,7 @@ button:hover {
     font-size: 0.9rem;
     color: #666;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -792,4 +790,38 @@ button:hover {
     cursor: pointer;
     padding: 0.25rem 0.5rem;
     font-size: 1.2rem;
+}
+/* Update section visibility rules */
+#entries, #tools-section, #playlist-section {
+    position: relative;
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+}
+/* Show sections when their checkbox is checked */
+:is(#toggle-entries-checkbox, #toggle-tools-checkbox, #toggle-playlist-checkbox):checked ~ main :is(#entries, #tools-section, #playlist-section) {
+    display: none;
+}
+#toggle-entries-checkbox:checked ~ main #entries {
+    display: block;
+    opacity: 1;
+}
+#toggle-tools-checkbox:checked ~ main #tools-section {
+    display: block;
+    opacity: 1;
+}
+#toggle-playlist-checkbox:checked ~ main #playlist-section {
+    display: block;
+    opacity: 1;
+}
+/* Hide flashcard and actions when any section is visible */
+:is(#toggle-entries-checkbox, #toggle-tools-checkbox, #toggle-playlist-checkbox):checked ~ main :is(#flashcard, #actions) {
+    display: none;
 }
