@@ -350,6 +350,7 @@ main {
 	height: 100%;
 	position: relative;
 	perspective: 60rem;
+	z-index: 1;
 }
 
 #card-inner {
@@ -556,24 +557,6 @@ button {
 button:hover {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	background-color: #c1eaff;
-}
-
-#btns-progress {
-	display: flex;
-	gap: 0.5rem;
-}
-
-/* Different background colours help distinguish button actions. */
-#btn-again {
-	background-color: #ffcccc;
-}
-
-#btn-good {
-	background-color: #ccffcc;
-}
-
-#btn-easy {
-	background-color: #ccccff;
 }
 
 /* Delete button in entries */
@@ -855,6 +838,7 @@ button:hover {
     opacity: 0;
     transition: opacity 0.3s;
     z-index: 2;
+    padding-top: 2.5rem;  /* Make room for close button */
 }
 /* Show sections when their checkbox is checked */
 :is(#toggle-entries-checkbox, #toggle-tools-checkbox, #toggle-playlist-checkbox):checked ~ main :is(#entries, #tools-section, #playlist-section) {
@@ -875,4 +859,165 @@ button:hover {
 /* Hide flashcard and actions when any section is visible */
 :is(#toggle-entries-checkbox, #toggle-tools-checkbox, #toggle-playlist-checkbox):checked ~ main :is(#flashcard, #actions) {
     display: none;
+}
+
+/* Menu Trigger Button */
+#toggle-entries-menu {
+    position: relative;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    z-index: 1001;
+}
+
+.menu-icon {
+    font-size: 1.5rem;
+    color: #007acc;
+    transition: color 0.3s;
+}
+
+#toggle-entries-menu:hover .menu-icon {
+    color: #005488;
+}
+
+/* Dropdown Menu Container */
+.dropdown-menu {
+    display: none;
+    position: fixed;
+    top: 4rem;
+    left: 1rem;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    z-index: 1000;
+    padding: 0.5rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Menu Items */
+.menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: #333;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.menu-item:hover {
+    background-color: #f0f7ff;
+    color: #007acc;
+}
+
+.menu-item + .menu-item {
+    margin-top: 0.25rem;
+}
+
+/* Show menu when display: block is set via JavaScript */
+.dropdown-menu[style*="display: block"] {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Close button styles */
+.close-section {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: all 0.2s ease;
+    z-index: 10;
+    padding: 0;
+}
+
+.close-section:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #333;
+    transform: scale(1.1);
+}
+
+/* Notes Section Styles */
+.notes-container {
+    margin-top: 1rem;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.notes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.notes-header h4 {
+    margin: 0;
+    color: #666;
+}
+
+.notes-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.notes-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.notes-button:hover {
+    opacity: 1;
+}
+
+.notes-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+#card-notes {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+#card-notes:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
 }

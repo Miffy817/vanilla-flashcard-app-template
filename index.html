@@ -20,20 +20,23 @@
 		<main>
 			<!-- The header includes a button to show/hide all flashcard entries. -->
 			<h1 id="header">
-				<!-- Dropdown trigger -->
-				<span id="toggle-entries-menu" title="Show Menu" tabindex="0">|||</span>
+				<span id="toggle-entries-menu" title="Show Menu" tabindex="0">
+					<span class="menu-icon">☰</span>
+				</span>
 				Vanilla Flashcard App Template
 				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">🖼️</label>
 			
 				<!-- Dropdown menu -->
-				<div id="entries-dropdown-menu" style="display:none; position:absolute; z-index:10; background:white; border:1px solid #ccc; border-radius:0.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.15); min-width:180px; right:1rem; top:3.5rem;">
-					<button id="menu-home" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">Home</button>
-					<button id="menu-view-all" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">View  All Generated Flashcards</button>
-					<button id="menu-manage-playlists" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">Manage Playlists</button>
+				<div id="entries-dropdown-menu" class="dropdown-menu">
+					<button id="menu-home" class="menu-item">Home</button>
+					<button id="menu-view-all" class="menu-item">View All Generated Flashcards</button>
+					<button id="menu-manage-playlists" class="menu-item">Manage Playlists</button>
+					<button id="menu-Quiz" class="menu-item">Quiz</button>
 				</div>
 			</h1>
 			<!-- This section displays a table of all cards for quick access. -->
 			<section id="entries">
+				<button class="close-section" onclick="document.getElementById('toggle-entries-checkbox').checked = false">×</button>
 				<div id="entries-inner">
 					<table>
 						<thead>
@@ -50,6 +53,7 @@
 			</section>
 			<!-- Section for flashcard generation, import and export -->
 			<section id="tools-section">
+				<button class="close-section" onclick="document.getElementById('toggle-tools-checkbox').checked = false">×</button>
 				<div id="tools-container">
 					<div id="generator-panel" class="tool-panel">
 						<h2>Generate Flashcards from Images</h2>
@@ -86,6 +90,7 @@
 			</section>
 			 <!-- New Playlist Management Section -->
             <section id="playlist-section">
+				<button class="close-section" onclick="document.getElementById('toggle-playlist-checkbox').checked = false">×</button>
                 <div id="playlist-container">
                     <div class="playlist-panel tool-panel">
                         <h2>Playlist Management</h2>
@@ -160,6 +165,18 @@
 									<div class="example-container">
 										<p id="back-example"></p>
 									</div>
+									<!-- Add notes section -->
+									<div class="notes-container">
+										<div class="notes-header">
+											<h4>Notes</h4>
+											<div class="notes-controls">
+												<button id="btn-edit-notes" class="notes-button" title="Edit Notes">✎</button>
+												<button id="btn-save-notes" class="notes-button" title="Save Notes" disabled>💾</button>
+												<button id="btn-clear-notes" class="notes-button" title="Clear Notes">🗑️</button>
+											</div>
+										</div>
+										<textarea id="card-notes" disabled placeholder="Add your notes here..."></textarea>
+									</div>
 								</div>
 								<div class="back-right">
 									<img id="back-image" />
@@ -173,12 +190,7 @@
 			<!-- Navigation and learning progress buttons for the current flashcard. -->
 			<div id="actions">
 				<button id="btn-back">‹ Back</button>
-				<div id="btns-progress">
-					<button id="btn-again">☹ Again</button>
-					<button id="btn-good">😉 Good</button>
-					<button id="btn-easy">😍 Easy</button>
-				</div>
-				<button id="btn-skip">Skip ›</button>
+				<button id="btn-skip">Next›</button>
 			</div>
 		</main>
 		<!-- This line imports the JavaScript file containing the logic for the flashcard app. It can be modified to add functionality to the app. -->
@@ -225,6 +237,11 @@
 				entriesCheckbox.checked = false;
 				toolsCheckbox.checked = false;
 				menu.style.display = 'none';
+			});
+
+			// Add Quiz button handler
+			document.getElementById('menu-Quiz').addEventListener('click', () => {
+				window.location.href = './quiz.html';
 			});
 		</script>
 	</body>

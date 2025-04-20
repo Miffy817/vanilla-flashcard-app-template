@@ -366,45 +366,6 @@ document.getElementById("btn-skip").addEventListener("click", () => {
     renderCard();
 });
 
-/**
- * Mapping between the user's selection (Again, Good, Easy) and the number of days to wait before reviewing the card again.
- */
-const dayOffset = { again: 1, good: 3, easy: 7 };
-
-/**
- * Records learning progress by updating the card's due date based on the user's selection (Again, Good, Easy).
- */
-async function updateDueDate(type) {
-    const card = cards[currentIndex];
-    const today = new Date();
-    const dueDate = new Date(today.setDate(today.getDate() + dayOffset[type]) - today.getTimezoneOffset() * 60 * 1000);
-    const dueDateString = dueDate.toISOString().split("T")[0]; // Format in YYYY-MM-DD format
-
-    // Update card's progress in memory
-    (card.progress ??= {}).dueDate = dueDateString;
-
-    // Save to IndexedDB
-    await db.put("cards", card);
-
-    updateEntries();
-}
-
-document.getElementById("btn-again").addEventListener("click", async () => {
-    await updateDueDate("again");
-    nextCard();
-    renderCard();
-});
-document.getElementById("btn-good").addEventListener("click", async () => {
-    await updateDueDate("good");
-    nextCard();
-    renderCard();
-});
-document.getElementById("btn-easy").addEventListener("click", async () => {
-    await updateDueDate("easy");
-    nextCard();
-    renderCard();
-});
-
 // Add new playlist management functions
 const playlistNameInput = document.getElementById("playlist-name");
 const createPlaylistBtn = document.getElementById("btn-create-playlist");
@@ -661,5 +622,34 @@ btnCloseModal.addEventListener("click", () => {
 window.addEventListener("click", (event) => {
     if (event.target === playlistModal) {
         playlistModal.style.display = "none";
+    }
+});
+
+// Add this to your existing JavaScript initialization code
+const notesTextarea = document.getElementById('card-notes');
+const editNotesBtn = document.getElementById('btn-edit-notes');
+const saveNotesBtn = document.getElementById('btn-save-notes');
+const clearNotesBtn = document.getElementById('btn-clear-notes');
+
+// Notes editing functionality
+editNotesBtn.addEventListener('click', () => {
+    notesTextarea.disabled = false;
+    notesTextarea.focus();
+    saveNotesBtn.disabled = false;
+});
+
+saveNotesBtn.addEventListener('click', () => {
+    notesTextarea.disabled = true;
+    saveNotesBtn.disabled = true;
+    // Add code here to save notes to your storage system
+    // For example: currentCard.notes = notesTextarea.value;
+});
+
+clearNotesBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear your notes?')) {
+        notesTextarea.value = '';
+        notesTextarea.disabled = true;
+        saveNotesBtn.disabled = true;
+        // Add code here to clear notes from your storage system
     }
 });
