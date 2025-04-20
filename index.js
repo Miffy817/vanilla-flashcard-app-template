@@ -444,7 +444,14 @@ playlistDetailSection.id = "playlist-detail";
 playlistDetailSection.className = "playlist-panel tool-panel";
 document.querySelector("#playlist-container").appendChild(playlistDetailSection);
 
-// Modified loadPlaylists function to add click handlers for viewing playlist details
+// Add new utility function to close all sections
+function closeAllSections() {
+    document.getElementById('toggle-entries-checkbox').checked = false;
+    document.getElementById('toggle-tools-checkbox').checked = false;
+    document.getElementById('toggle-playlist-checkbox').checked = false;
+}
+
+// Modified loadPlaylists function with updated click handler
 async function loadPlaylists() {
     try {
         const playlists = await db.getAll("playlists");
@@ -467,12 +474,11 @@ async function loadPlaylists() {
             // Add delete button handler
             div.querySelector('.delete-btn').addEventListener('click', () => deletePlaylist(playlist.id));
             
-            // Add click handler for playlist name to filter main flashcard view and show entries section
+            // Modified click handler for playlist name
             div.querySelector('.playlist-name').addEventListener('click', () => {
                 playlistFilter = playlist;
                 currentIndex = 0;
-                // Show the entries section (index page)
-                if (entriesCheckbox) entriesCheckbox.checked = true;
+                closeAllSections(); // Close all section panels
                 reloadCardsFromDB();
             });
 
