@@ -12,7 +12,17 @@ async function initDB() {
         upgrade(db, oldVersion, newVersion) {
             // Create cards store if it doesn't exist
             if (!db.objectStoreNames.contains("cards")) {
-                db.createObjectStore("cards", { keyPath: "id" });
+                const cardStore = db.createObjectStore("cards", { keyPath: "id" });
+                // Add notes field to existing cards
+                cardStore.openCursor().then(function addNotesToExisting(cursor) {
+                    if (!cursor) return;
+                    const card = cursor.value;
+                    if (!card.notes) {
+                        card.notes = '';
+                        cursor.update(card);
+                    }
+                    cursor.continue().then(addNotesToExisting);
+                });
             }
             // Create playlists store if it doesn't exist
             if (!db.objectStoreNames.contains("playlists")) {
@@ -265,6 +275,7 @@ const backPosContainer = document.getElementById("back-pos-container");
 const backDefinition = document.getElementById("back-definition");
 const backExample = document.getElementById("back-example");
 const backImage = document.getElementById("back-image");
+const backZhTraditional = document.getElementById("back-zh-traditional");
 
 const flipCardCheckbox = document.getElementById("flip-card-checkbox");
 const cardInner = document.getElementById("card-inner");
@@ -279,12 +290,15 @@ function renderCard() {
         // Clear all fields
         frontImage.removeAttribute("src");
         backWord.textContent = "";
+        backZhTraditional.textContent = "";  // Clear Chinese translation
         backPronunciationUK.textContent = "—";
         backPronunciationUS.textContent = "—";
         backPosContainer.innerHTML = "";
         backDefinition.textContent = "";
         backExample.textContent = "";
         backImage.removeAttribute("src");
+        notesTextarea.value = '';
+        notesTextarea.disabled = true;
         return;
     }
 
@@ -306,6 +320,9 @@ function renderCard() {
     setTimeout(() => {
         // Update word on back side
         backWord.textContent = currentCard.word;
+        
+        // Update Chinese translation
+        backZhTraditional.textContent = currentCard.zhTraditional || ""; // Display Chinese translation if available
 
         // Update pronunciations
         backPronunciationUK.textContent = currentCard.pronunciationUK || "—";
@@ -342,7 +359,11 @@ function renderCard() {
             audioUS.src = currentCard.audioUS;
         }
     }, transitionHalfDuration);
-    // STUDENTS: End of recommended modifications
+
+    // Update notes
+    notesTextarea.value = currentCard.notes || '';
+    notesTextarea.disabled = true;
+    saveNotesBtn.disabled = true;
 
     updateEntries();
 }
@@ -638,18 +659,33 @@ editNotesBtn.addEventListener('click', () => {
     saveNotesBtn.disabled = false;
 });
 
-saveNotesBtn.addEventListener('click', () => {
-    notesTextarea.disabled = true;
-    saveNotesBtn.disabled = true;
-    // Add code here to save notes to your storage system
-    // For example: currentCard.notes = notesTextarea.value;
-});
-
-clearNotesBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to clear your notes?')) {
-        notesTextarea.value = '';
+saveNotesBtn.addEventListener('click', async () => {
+    try {
+        const currentCard = cards[currentIndex];
+        currentCard.notes = notesTextarea.value;
+        await db.put("cards", currentCard);
+        
         notesTextarea.disabled = true;
         saveNotesBtn.disabled = true;
-        // Add code here to clear notes from your storage system
+    } catch (error) {
+        console.error("Error saving notes:", error);
+        alert("Failed to save notes");
+    }
+});
+
+clearNotesBtn.addEventListener('click', async () => {
+    if (confirm('Are you sure you want to clear your notes?')) {
+        try {
+            const currentCard = cards[currentIndex];
+            currentCard.notes = '';
+            await db.put("cards", currentCard);
+            
+            notesTextarea.value = '';
+            notesTextarea.disabled = true;
+            saveNotesBtn.disabled = true;
+        } catch (error) {
+            console.error("Error clearing notes:", error);
+            alert("Failed to clear notes");
+        }
     }
 });

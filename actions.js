@@ -116,7 +116,7 @@ async function processImage(file, apiKey) {
             messages: [
                 {
                     role: "system",
-                    content: "You are a language learning assistant that analyzes images and creates flashcards. Extract the most prominent object or concept from the image and create a flashcard entry. Provide accurate dictionary-like definitions and example sentences that relate directly to what's shown in the image."
+                    content: "You are a language learning assistant that analyzes images and creates flashcards. Extract the most prominent object or concept from the image and create a flashcard entry. Provide accurate dictionary-like definitions, example sentences, and traditional Chinese translations that relate directly to what's shown in the image."
                 },
                 {
                     role: "user",
@@ -146,6 +146,10 @@ async function processImage(file, apiKey) {
                                 type: "string",
                                 description: "The word or short phrase to learn. DO NOT capitalize the first letter except for proper nouns. Prefer UK spelling."
                             },
+                            zhTraditional: {
+                                type: "string",
+                                description: "Traditional Chinese translation of the word"
+                            },
                             pronunciationUK: {
                                 type: "string",
                                 description: "UK pronunciation in IPA notation, enclosed with slashes"
@@ -170,7 +174,7 @@ async function processImage(file, apiKey) {
                                 description: "An example sentence using the word, related to what is shown in the image"
                             }
                         },
-                        required: ["word", "pronunciationUK", "pronunciationUS", "pos", "definition", "exampleSentence"],
+                        required: ["word", "zhTraditional", "pronunciationUK", "pronunciationUS", "pos", "definition", "exampleSentence"],
                         additionalProperties: false
                     },
                     strict: true

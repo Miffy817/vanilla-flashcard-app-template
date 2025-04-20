@@ -454,6 +454,13 @@ main {
 	color: #007acc;
 }
 
+.chinese-translation {
+    font-size: 150%;
+    margin: 0.5rem 0;
+    color: #444;
+    font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+}
+
 .pronunciation {
 	display: flex;
 	gap: 1rem;
