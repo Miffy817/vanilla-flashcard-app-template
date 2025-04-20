@@ -20,10 +20,17 @@
 		<main>
 			<!-- The header includes a button to show/hide all flashcard entries. -->
 			<h1 id="header">
-				<label for="toggle-entries-checkbox" id="toggle-entries" title="Show All Entries">|||</label>
+				<!-- Dropdown trigger -->
+				<span id="toggle-entries-menu" title="Show Menu" tabindex="0">|||</span>
 				Vanilla Flashcard App Template
 				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">🖼️</label>
-				<label for="toggle-playlist-checkbox" id="toggle-playlist" title="Manage Playlists">📑</label>
+			
+				<!-- Dropdown menu -->
+				<div id="entries-dropdown-menu" style="display:none; position:absolute; z-index:10; background:white; border:1px solid #ccc; border-radius:0.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.15); min-width:180px; right:1rem; top:3.5rem;">
+					<button id="menu-home" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">Home</button>
+					<button id="menu-view-all" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">View All Flashcards</button>
+					<button id="menu-manage-playlists" style="display:block; width:100%; padding:0.75rem 1rem; border:none; background:none; text-align:left; cursor:pointer;">Manage Playlists</button>
+				</div>
 			</h1>
 			<!-- This section displays a table of all cards for quick access. -->
 			<section id="entries">
@@ -176,5 +183,49 @@
 		</main>
 		<!-- This line imports the JavaScript file containing the logic for the flashcard app. It can be modified to add functionality to the app. -->
 		<script src="./index.js" type="module"></script>
+		<script>
+			// Dropdown menu logic
+			const menuBtn = document.getElementById('toggle-entries-menu');
+			const menu = document.getElementById('entries-dropdown-menu');
+			const homeBtn = document.getElementById('menu-home');
+			const viewAllBtn = document.getElementById('menu-view-all');
+			const managePlaylistsBtn = document.getElementById('menu-manage-playlists');
+			const entriesCheckbox = document.getElementById('toggle-entries-checkbox');
+			const playlistCheckbox = document.getElementById('toggle-playlist-checkbox');
+			const toolsCheckbox = document.getElementById('toggle-tools-checkbox');
+
+			// Toggle menu visibility
+			function toggleMenu(e) {
+				e.stopPropagation();
+				menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+			}
+			menuBtn.addEventListener('click', toggleMenu);
+			menuBtn.addEventListener('keydown', e => {
+				if (e.key === 'Enter' || e.key === ' ') toggleMenu(e);
+			});
+
+			// Hide menu when clicking outside
+			document.addEventListener('click', () => { menu.style.display = 'none'; });
+
+			// Menu actions
+			homeBtn.addEventListener('click', () => {
+				entriesCheckbox.checked = false;
+				playlistCheckbox.checked = false;
+				toolsCheckbox.checked = false;
+				menu.style.display = 'none';
+			});
+			viewAllBtn.addEventListener('click', () => {
+				entriesCheckbox.checked = true;
+				playlistCheckbox.checked = false;
+				toolsCheckbox.checked = false;
+				menu.style.display = 'none';
+			});
+			managePlaylistsBtn.addEventListener('click', () => {
+				playlistCheckbox.checked = true;
+				entriesCheckbox.checked = false;
+				toolsCheckbox.checked = false;
+				menu.style.display = 'none';
+			});
+		</script>
 	</body>
 </html>
