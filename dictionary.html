@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Assistant - Vocapture</title>
+    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="./dictionary.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/github.min.css">
+</head>
+<body class="modern-theme">
+    <main class="dictionary-main">
+        <header class="app-header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <span class="material-icons">arrow_back</span>
+                <span>Back to Home</span>
+            </button>
+            <h1>Dictionary Assistant</h1>
+        </header>
+
+        <div class="chat-interface">
+            <div id="chat-box" class="chat-box">
+                <div class="message assistant">
+                    <div class="message-content">
+                        Hello! I'm your dictionary assistant. Ask me about any word, and I'll help you understand its meaning, usage, and more.
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loading-container" class="loading-message" style="display: none;">
+                <div class="loading-spinner"></div>
+                <span>Processing your request...</span>
+            </div>
+            
+            <form id="chat-form" class="chat-form">
+                <input type="text" 
+                       id="user-input" 
+                       class="chat-input" 
+                       placeholder="Type a word or question..."
+                       autocomplete="off"
+                       required>
+                <button type="submit" class="send-button" id="send-button">
+                    <span class="material-icons">send</span>
+                </button>
+            </form>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/highlight.min.js"></script>
+    <script src="./dictionary.js" type="module"></script>
+</body>
+</html>

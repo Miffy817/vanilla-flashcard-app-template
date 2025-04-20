@@ -193,20 +193,30 @@ function showResults() {
             const optionIndex = parseInt(option.dataset.option);
             if (optionIndex === correctAnswer) {
                 option.classList.add('correct');
-            } else if (optionIndex === userAnswer) {
+            } else if (optionIndex === userAnswer && userAnswer !== correctAnswer) {
                 option.classList.add('incorrect');
             }
         });
     });
 
-    // Display results
-    resultsDiv.style.display = 'block';
-    resultsDiv.innerHTML = `
-        <h2>Quiz Results</h2>
-        <p>You scored ${score} out of ${quizQuestions.length}!</p>
-        <button class="primary-button" onclick="location.reload()">Try Again</button>
+    // Insert results at the top of questions container
+    const resultsHtml = `
+        <div class="quiz-score">
+            <h2>Quiz Results</h2>
+            <p>You scored ${score} out of ${quizQuestions.length}!</p>
+            <button class="quiz-btn primary" onclick="location.reload()">
+                <span class="material-icons">replay</span>
+                Try Again
+            </button>
+        </div>
     `;
+    questionsContainer.insertAdjacentHTML('afterbegin', resultsHtml);
+    
+    // Hide finish button
     finishButton.style.display = 'none';
+    
+    // Scroll to top to show results
+    questionsContainer.scrollIntoView({ behavior: 'smooth' });
 }
 
 // Utility function to shuffle array

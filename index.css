@@ -30,31 +30,56 @@ h1, h2, h3, h4, h5, h6 {
 }
 /* End of CSS reset */
 
-/* Applies a custom font and centers the page using a grid layout. */
+/* Modern theme variables */
+.modern-theme {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #64748b;
+    --accent-color: #eab308;
+    --danger-color: #dc2626;
+    --success-color: #22c55e;
+    --background-color: #f8fafc;
+    --surface-color: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --transition: all 0.2s ease;
+}
+
+/* Base styles */
 html {
-	font-family: "Playpen Sans", fantasy;
-	font-size: clamp(12px, 0.5vw + 9.6px, 16px);
+	font-family: "Playpen Sans", system-ui, -apple-system, sans-serif;
+	font-size: clamp(14px, 1vw + 8px, 16px);
 	width: 100%;
 	height: 100%;
 	display: grid;
 	place-items: center;
-	background-color: #f4f8fb;
+	background-color: var(--background-color);
 	overflow: hidden;
 }
 
 body {
+	color: var(--text-primary);
+	line-height: 1.6;
 	display: contents;
 }
 
-/* Arranges the main content into rows for header, flashcard area, and actions. */
+/* Layout */
 main {
+	max-width: 1440px; /* Increased from 1280px */
+	width: 95%;
+	margin: 0 auto;
 	padding: 1rem;
-	width: 100%;
-	height: 100%;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
-	gap: 1rem;
-	max-width: 60rem;
+	gap: 1.5rem;
+	height: 100vh;
 }
 
 /* Styles the header with a title and toggle buttons for the entries list and tools interface. */
@@ -200,13 +225,13 @@ main {
 }
 
 .primary-button {
-	background-color: #007acc;
+	background-color: var(--primary-color);
 	color: white;
 	padding: 0.75rem 2rem;
 }
 
 .primary-button:hover {
-	background-color: #005488;
+	background-color: var(--primary-hover);
 }
 
 .secondary-button {
@@ -349,8 +374,9 @@ main {
 	grid-column: 1 / 2;
 	height: 100%;
 	position: relative;
-	perspective: 60rem;
+	perspective: 2000px;
 	z-index: 1;
+	min-height: 500px; /* Ensure minimum height */
 }
 
 #card-inner {
@@ -358,7 +384,7 @@ main {
 	width: 100%;
 	height: 100%;
 	transform-style: preserve-3d;
-	transition: transform 0.6s;
+	transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 	cursor: pointer;
 }
 
@@ -378,11 +404,11 @@ main {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #fefefe;
+	background-color: var(--surface-color);
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	font-size: 150%;
-	border-radius: 1rem;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-lg);
 	transition: box-shadow 0.3s;
 }
 
@@ -403,6 +429,7 @@ main {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 2rem;
 }
 
 #front-image {
@@ -433,10 +460,10 @@ main {
 	position: relative;
 	width: 100%;
 	height: 100%;
-	padding: 1.5rem;
+	padding: 2rem 3rem; /* Increased padding */
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
+	gap: 1.5rem;
 	overflow-y: auto;
 }
 
@@ -449,13 +476,13 @@ main {
 }
 
 #back-word {
-	font-size: 200%;
-	margin: 0;
+	font-size: 2.5rem;
+	margin-bottom: 0.5rem;
 	color: #007acc;
 }
 
 .chinese-translation {
-    font-size: 150%;
+    font-size: 2rem;
     margin: 0.5rem 0;
     color: #444;
     font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
@@ -487,14 +514,16 @@ main {
 
 .back-content {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 1rem;
+	grid-template-columns: 3fr 2fr; /* Adjusted ratio */
+	gap: 2rem;
+	height: 100%;
 }
 
 .back-left {
 	display: flex;
 	flex-direction: column;
-	gap: 0.75rem;
+	gap: 1.5rem;
+	max-width: 800px; /* Maximum width for readability */
 }
 
 .back-pos-container {
@@ -513,11 +542,17 @@ main {
 }
 
 #back-definition {
-	font-size: 110%;
+	font-size: 1.2rem;
+	line-height: 1.6;
 	margin: 0;
 }
 
 .example-container {
+	margin-top: 1rem;
+	padding: 1rem;
+	background: var(--surface-color);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-sm);
 	font-style: italic;
 	color: #444;
 	border-left: 3px solid #007acc;
@@ -532,13 +567,15 @@ main {
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
+	padding: 1rem;
 }
 
 #back-image {
-	max-height: 100%;
+	max-width: 100%;
+	max-height: 400px; /* Limit image height */
 	object-fit: contain;
-	border-radius: 0.5rem;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--shadow-md);
 }
 
 /* STUDENTS: End of recommended modifications */
@@ -554,16 +591,21 @@ button {
 	appearance: none;
 	border: 1px solid rgba(0, 0, 0, 0.1);
 	padding: 0.5rem 2rem;
-	border-radius: 0.5rem;
-	background-color: #ddf5ff;
+	border-radius: var(--radius-md);
+	background-color: var(--surface-color);
+	color: var(--text-primary);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	transition: background-color 0.3s, box-shadow 0.3s;
 	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 500;
 }
 
 button:hover {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	background-color: #c1eaff;
+	background-color: var(--border-color);
 }
 
 /* Delete button in entries */
@@ -894,10 +936,9 @@ button:hover {
     position: fixed;
     top: 4rem;
     left: 1rem;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     min-width: 250px;
     z-index: 1000;
     padding: 0.5rem;
@@ -923,7 +964,7 @@ button:hover {
     text-align: left;
     background: none;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     color: #333;
     font-size: 0.95rem;
@@ -1027,4 +1068,46 @@ button:hover {
 #card-notes:disabled {
     background-color: #f5f5f5;
     cursor: not-allowed;
+}
+
+/* Animation keyframes */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .back-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .back-right {
+        order: -1;
+        padding: 0;
+    }
+    
+    #back-image {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 0.5rem;
+    }
+    
+    .app-header {
+        padding: 0.75rem;
+    }
+    
+    .card-front-container, .card-back-container {
+        padding: 1rem;
+    }
 }

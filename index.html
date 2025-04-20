@@ -10,8 +10,10 @@
 		<link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet" />
 		<!-- This line loads the CSS file containing the styles for the flashcard app. It can be modified to change the appearance of the app. -->
 		<link rel="stylesheet" href="./index.css" />
+		<!-- Add Material Icons -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	</head>
-	<body>
+	<body class="modern-theme">
 		<!-- These hidden checkboxes store the toggling state of the entries panel, the flashcard and the tools interface. Don't remove them. -->
 		<input type="checkbox" id="toggle-entries-checkbox" hidden />
 		<input type="checkbox" id="flip-card-checkbox" hidden />
@@ -19,19 +21,41 @@
 		<input type="checkbox" id="toggle-playlist-checkbox" hidden />
 		<main>
 			<!-- The header includes a button to show/hide all flashcard entries. -->
-			<h1 id="header">
-				<span id="toggle-entries-menu" title="Show Menu" tabindex="0">
-					<span class="menu-icon">☰</span>
-				</span>
-				Vocapture
-				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">Generate Flashcard🖼️</label>
-			
+			<h1 id="header" class="app-header">
+				<div class="header-left">
+					<span id="toggle-entries-menu" title="Show Menu" tabindex="0">
+						<span class="material-icons">menu</span>
+					</span>
+					<span class="app-title">Vocapture</span>
+				</div>
+				<div class="header-right">
+					<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">
+						<span class="material-icons">add_photo_alternate</span>
+						<span>Create</span>
+					</label>
+				</div>
 				<!-- Dropdown menu -->
 				<div id="entries-dropdown-menu" class="dropdown-menu">
-					<button id="menu-home" class="menu-item">Home</button>
-					<button id="menu-view-all" class="menu-item">View All Generated Flashcards</button>
-					<button id="menu-manage-playlists" class="menu-item">Manage Playlists</button>
-					<button id="menu-Quiz" class="menu-item">Quiz</button>
+					<button id="menu-home" class="menu-item">
+						<span class="material-icons">home</span>
+						<span>Home</span>
+					</button>
+					<button id="menu-view-all" class="menu-item">
+						<span class="material-icons">grid_view</span>
+						<span>View All Cards</span>
+					</button>
+					<button id="menu-manage-playlists" class="menu-item">
+						<span class="material-icons">playlist_add</span>
+						<span>Manage Playlists</span>
+					</button>
+					<button id="menu-Quiz" class="menu-item">
+						<span class="material-icons">quiz</span>
+						<span>Quiz</span>
+					</button>
+					<button id="menu-dictionary" class="menu-item">
+						<span class="material-icons">book</span>
+						<span>Dictionary Assistant</span>
+					</button>
 				</div>
 			</h1>
 			<!-- This section displays a table of all cards for quick access. -->
@@ -43,7 +67,7 @@
 							<tr>
 								<th>Image</th>
 								<th>Word</th>
-								<th>Due Date</th>
+								<th>Create Date</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -251,6 +275,11 @@
 			// Add Quiz button handler
 			document.getElementById('menu-Quiz').addEventListener('click', () => {
 				window.location.href = './quiz.html';
+			});
+
+			// Add Dictionary button handler
+			document.getElementById('menu-dictionary').addEventListener('click', () => {
+				window.location.href = './dictionary.html';
 			});
 
 			// Add event listener for viewing generated cards

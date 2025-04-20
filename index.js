@@ -162,21 +162,13 @@ function initEntries() {
         const cellWord = document.createElement("td");
         cellWord.textContent = card.word || "Untitled";
 
-        // Due date cell with formatting
-        const cellDue = document.createElement("td");
-        if (card.progress?.dueDate) {
-            const dueDate = new Date(card.progress.dueDate);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            if (dueDate < today) {
-                cellDue.classList.add("overdue-date");
-            }
-            
-            // Format date as YYYY-MM-DD
-            cellDue.textContent = dueDate.toISOString().split('T')[0];
+        // Create Date cell
+        const cellCreateDate = document.createElement("td");
+        if (card.createdAt) {
+            const createDate = new Date(card.createdAt);
+            cellCreateDate.textContent = createDate.toLocaleDateString();
         } else {
-            cellDue.textContent = "Unseen";
+            cellCreateDate.textContent = "Unknown";
         }
 
         // Action cell
@@ -194,7 +186,7 @@ function initEntries() {
         // Append all cells
         row.appendChild(cellImage);
         row.appendChild(cellWord);
-        row.appendChild(cellDue);
+        row.appendChild(cellCreateDate);
         row.appendChild(cellAction);
         entriesBody.appendChild(row);
     });
@@ -237,19 +229,6 @@ function updateEntries() {
     cards.forEach((card, i) => {
         const row = entriesBody.children[i];
         row.classList.toggle("row-highlight", i === currentIndex);
-
-        const cellDue = row.children[2]; // Due date is at index 2
-        const dueDateString = card.progress?.dueDate;
-        if (dueDateString) {
-            cellDue.textContent = dueDateString;
-            // If the due date is earlier than today, mark it as overdue
-            const dueDate = new Date(dueDateString);
-            const today = new Date();
-            cellDue.classList.toggle("overdue-date", dueDate.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0));
-        } else {
-            cellDue.textContent = "Unseen";
-            cellDue.classList.remove("overdue-date");
-        }
     });
 }
 

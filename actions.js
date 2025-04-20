@@ -252,6 +252,7 @@ async function processImage(file, apiKey) {
     flashcardData.image = file;
     flashcardData.id = crypto.randomUUID();
     flashcardData.progress = {};
+    flashcardData.createdAt = new Date().toISOString(); // Add creation date
 
     return flashcardData;
 }
