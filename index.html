@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Vanilla Flashcard App Template</title>
+		<title>Vocapture</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<!-- The font used for the flashcard app. You can change this to any other font. -->
@@ -24,7 +24,7 @@
 					<span class="menu-icon">☰</span>
 				</span>
 				Vocapture
-				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">🖼️</label>
+				<label for="toggle-tools-checkbox" id="toggle-tools" title="Make Flashcards">Generate Flashcard🖼️</label>
 			
 				<!-- Dropdown menu -->
 				<div id="entries-dropdown-menu" class="dropdown-menu">
@@ -68,6 +68,9 @@
 						</div>
 						<div class="form-actions">
 							<button id="btn-generate" class="primary-button">Generate Flashcards</button>
+						</div>
+						<div id="generation-feedback" style="margin-top: 10px; text-align: center;">
+							<span id="cards-generated-count"></span>
 						</div>
 					</div>
 					<div id="import-export-panel" class="tool-panel">
@@ -126,7 +129,10 @@
 					<progress id="operation-progress" value="0" max="100"></progress>
 					<div id="operation-status">Ready</div>
 				</div>
-				<div id="operation-results">Select an operation above to begin</div>
+				<div id="operation-results">
+					<span id="result-count"></span>
+					<button id="view-generated" class="primary-button" style="display: none;">View Generated Cards</button>
+				</div>
 			</div>
 			<!-- The main flashcard section. Clicking flips between front and back. -->
 			<section id="flashcard">
@@ -246,6 +252,23 @@
 			document.getElementById('menu-Quiz').addEventListener('click', () => {
 				window.location.href = './quiz.html';
 			});
+
+			// Add event listener for viewing generated cards
+			document.getElementById('view-generated').addEventListener('click', () => {
+				document.getElementById('toggle-tools-checkbox').checked = false;
+				document.getElementById('toggle-entries-checkbox').checked = true;
+			});
+			
+			// Auto-close tools section after successful generation
+			function handleGenerationComplete(count) {
+				const viewButton = document.getElementById('view-generated');
+				document.getElementById('result-count').textContent = `${count} cards generated successfully!`;
+				viewButton.style.display = 'inline-block';
+				setTimeout(() => {
+					document.getElementById('toggle-tools-checkbox').checked = false;
+					document.getElementById('toggle-entries-checkbox').checked = true;
+				}, 1500);
+			}
 		</script>
 	</body>
 </html>
